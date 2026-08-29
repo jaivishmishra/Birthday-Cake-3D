@@ -53,7 +53,7 @@ scene.background = new THREE.Color(0x050510);
 
 const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 600);
 const TARGET_CAM_POS = new THREE.Vector3(0, 9, 15);
-camera.position.copy(TARGET_CAM_POS); // Start directly upfront!
+camera.position.set(0, 35, 45);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
@@ -65,7 +65,7 @@ renderer.toneMappingExposure = 0.92;
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enabled = true; // Orbit controls enabled upfront!
+controls.enabled = false;
 controls.enablePan = false;
 controls.minPolarAngle = THREE.MathUtils.degToRad(18);
 controls.maxPolarAngle = THREE.MathUtils.degToRad(88);
@@ -955,28 +955,45 @@ let boxSpotlight = null;
 function buildGiftBox() {
     giftBoxGroup = new THREE.Group();
 
-    const boxW = 7.6;
-    const boxH = 4.4;
-    const boxD = 7.6;
+    const boxW = 7.2;
+    const boxH = 4.2;
+    const boxD = 7.2;
 
-    // Bright Gryffindor crimson & gold ribbon
-    const boxMat = new THREE.MeshStandardMaterial({ color: 0xD81E3A, roughness: 0.3, metalness: 0.1 });
-    const ribbonMat = new THREE.MeshStandardMaterial({ color: 0xFFDF00, roughness: 0.2, metalness: 0.8 });
+    // Super bright Gryffindor crimson red
+    const boxMat = new THREE.MeshStandardMaterial({
+        color: 0xD81E3A,
+        roughness: 0.35,
+        metalness: 0.1
+    });
 
-    // 1. Box Base Structure (Covers cake)
+    const ribbonMat = new THREE.MeshStandardMaterial({
+        color: 0xFFDF00, // Glowing gold ribbon
+        roughness: 0.2,
+        metalness: 0.9
+    });
+
+    // Box Base
     const baseGroup = new THREE.Group();
-    const fbGeo = new THREE.BoxGeometry(boxW, boxH, 0.15);
+
+    const botGeo = new THREE.BoxGeometry(boxW, 0.2, boxD);
+    const botMesh = new THREE.Mesh(botGeo, boxMat);
+    botMesh.position.y = 0.1;
+    baseGroup.add(botMesh);
+
+    const wallThick = 0.15;
+    const fbGeo = new THREE.BoxGeometry(boxW, boxH, wallThick);
     const fWall = new THREE.Mesh(fbGeo, boxMat);
     fWall.position.set(0, boxH / 2, boxD / 2);
     const bWall = new THREE.Mesh(fbGeo, boxMat);
     bWall.position.set(0, boxH / 2, -boxD / 2);
+    baseGroup.add(fWall, bWall);
 
-    const lrGeo = new THREE.BoxGeometry(0.15, boxH, boxD);
+    const lrGeo = new THREE.BoxGeometry(wallThick, boxH, boxD);
     const lWall = new THREE.Mesh(lrGeo, boxMat);
     lWall.position.set(-boxW / 2, boxH / 2, 0);
     const rWall = new THREE.Mesh(lrGeo, boxMat);
     rWall.position.set(boxW / 2, boxH / 2, 0);
-    baseGroup.add(fWall, bWall, lWall, rWall);
+    baseGroup.add(lWall, rWall);
 
     const ribGeoX = new THREE.BoxGeometry(boxW + 0.08, boxH + 0.08, 0.45);
     const ribX = new THREE.Mesh(ribGeoX, ribbonMat);
@@ -988,7 +1005,7 @@ function buildGiftBox() {
 
     giftBoxGroup.add(baseGroup);
 
-    // 2. Box Top Lid & Golden Ribbon Bow
+    // Box Lid
     boxLidMesh = new THREE.Group();
     const lidW = boxW + 0.35;
     const lidH = 0.65;
@@ -1008,6 +1025,12 @@ function buildGiftBox() {
     boxLidMesh.add(bowL, bowR);
 
     giftBoxGroup.add(boxLidMesh);
+
+    // Dedicated high-intensity warm spotlight right above the gift box
+    boxSpotlight = new THREE.PointLight(0xFFF5E0, 5.0, 22);
+    boxSpotlight.position.set(0, 8.5, 4);
+    scene.add(boxSpotlight);
+
     scene.add(giftBoxGroup);
 }
 
@@ -1021,7 +1044,7 @@ function buildCake(name) {
     const root = new THREE.Group();
     cakeGroupRef = root;
 
-    // Cake initially inside the gift box (positioned at y = -2.5)
+    // Cake initially hidden inside the box (positioned at y = -2.5)
     root.position.y = -2.5;
 
     // --- Hogwarts Great Hall Heavy Oak Feast Table ---
@@ -1556,21 +1579,15 @@ if (nameInput) nameInput.addEventListener('keydown', e => { if (e.key === 'Enter
 if (ageInput) ageInput.addEventListener('keydown', e => { if (e.key === 'Enter') startBtn.click(); });
 
 function triggerUnboxing() {
-    if (hasUnboxed) return;
+    if (!readyToUnbox || hasUnboxed) return;
     hasUnboxed = true;
 
-    // Hide unbox prompt badge
-    const unboxHint = document.getElementById('tap-unbox-hint');
-    if (unboxHint) unboxHint.classList.remove('show');
-
-    // Hedwig Owl spreads wings and slowly takes off into the sky!
+    // Hedwig Owl spreads wings and slowly takes off!
     owlFlying = true;
     owlFlightStart = performance.now();
 
-    // Trigger box opening reveal animation!
-    isCameraAnimating = true;
-    camAnimStartTime = performance.now();
-    playMagicChimeSound();
+    // Trigger camera cinematic zoom & box opening reveal!
+    triggerCameraIntro();
 
     setTimeout(() => {
         if (songStartBtn) songStartBtn.classList.remove('hidden');
@@ -1586,50 +1603,31 @@ startBtn.addEventListener('click', () => {
 
     if (!cakeBuilt) {
         buildCake(name);
-        buildGiftBox();
         buildOwl();
         buildHogwartsGifts();
         cakeBuilt = true;
     }
 
     nameScreen.classList.remove('show');
-    readyToUnbox = true; // Ready immediately!
 
-    // Show floating unbox prompt badge
-    const unboxHint = document.getElementById('tap-unbox-hint');
-    if (unboxHint) unboxHint.classList.add('show');
+    // Enable click-anywhere to unbox!
+    setTimeout(() => {
+        readyToUnbox = true;
+    }, 400);
 });
 
-// Three.js Raycaster to detect clicks directly on the 3D Gift Box mesh!
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-
-function onPointerClick(e) {
+// Click ANYWHERE on screen to unbox!
+window.addEventListener('click', (e) => {
     if (nameScreen.classList.contains('show')) return;
-    if (hasUnboxed) return;
     if (e.target.closest('#song-start-btn') || e.target.closest('.song-side-btn')) return;
-
-    // Convert click coordinates to normalized device coordinates (-1 to +1)
-    const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-
-    if (giftBoxGroup) {
-        const intersects = raycaster.intersectObjects(giftBoxGroup.children, true);
-        if (intersects.length > 0) {
-            triggerUnboxing();
-            return;
-        }
-    }
-
-    // Fallback: Click anywhere on screen also unboxes!
     triggerUnboxing();
-}
+});
 
-window.addEventListener('click', onPointerClick);
-window.addEventListener('pointerdown', onPointerClick);
+window.addEventListener('touchstart', (e) => {
+    if (nameScreen.classList.contains('show')) return;
+    if (e.target.closest('#song-start-btn') || e.target.closest('.song-side-btn')) return;
+    triggerUnboxing();
+});
 
 if (songStartBtn) {
     songStartBtn.addEventListener('click', () => {
@@ -1667,33 +1665,33 @@ const clock = new THREE.Clock();
     const t = clock.getElapsedTime();
     const now = performance.now();
 
-    // Unboxing Animation (Lid lifts up into sky & box walls drop into table)
+    // Cinematic Camera Zoom + Unboxing Animation (Cake emerges out of box)
     if (isCameraAnimating) {
         const progress = Math.min(1.0, (now - camAnimStartTime) / CAM_ANIM_DURATION);
-        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        const easeProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease out
 
-        // Cake position stays stable at y = 0
+        camera.position.lerpVectors(new THREE.Vector3(0, 35, 45), TARGET_CAM_POS, easeProgress);
+
+        // Cake rises smoothly OUT of the box onto the table
         if (cakeGroupRef) {
-            cakeGroupRef.position.y = 0.0;
+            cakeGroupRef.position.y = -2.5 + easeProgress * 2.5; // rises from -2.5 up to 0.0
         }
 
-        // Animate Gift Box Lid flying smoothly up into space
-        if (boxLidMesh) {
-            boxLidMesh.position.y = easeProgress * 22;
-            boxLidMesh.rotation.y = easeProgress * 1.5;
-        }
+        // Animate Gift Box lid lifting up into the air & box base dropping away
+        if (boxLidMesh && progress > 0.15) {
+            const lidProgress = (progress - 0.15) / 0.85;
+            boxLidMesh.position.y = lidProgress * 15; // lid flies up into space
+            boxLidMesh.rotation.z = lidProgress * 0.6;
 
-        // Animate Gift Box Base dropping smoothly down into the table
-        if (giftBoxGroup) {
-            giftBoxGroup.position.y = -easeProgress * 12;
+            if (giftBoxGroup && lidProgress > 0.35) {
+                giftBoxGroup.position.y = -(lidProgress - 0.35) * 12; // box drops down out of sight
+            }
         }
 
         if (progress >= 1.0) {
             isCameraAnimating = false;
-            if (giftBoxGroup) {
-                scene.remove(giftBoxGroup);
-                giftBoxGroup = null;
-            }
+            controls.enabled = true;
+            if (giftBoxGroup) scene.remove(giftBoxGroup);
         }
     }
 
