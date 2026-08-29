@@ -53,7 +53,7 @@ scene.background = new THREE.Color(0x050510);
 
 const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 600);
 const TARGET_CAM_POS = new THREE.Vector3(0, 9, 15);
-camera.position.set(0, 35, 45);
+camera.position.copy(TARGET_CAM_POS); // Start directly upfront!
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
@@ -65,7 +65,7 @@ renderer.toneMappingExposure = 0.92;
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enabled = false;
+controls.enabled = true; // Orbit controls enabled upfront!
 controls.enablePan = false;
 controls.minPolarAngle = THREE.MathUtils.degToRad(18);
 controls.maxPolarAngle = THREE.MathUtils.degToRad(88);
@@ -1044,8 +1044,8 @@ function buildCake(name) {
     const root = new THREE.Group();
     cakeGroupRef = root;
 
-    // Cake initially hidden inside the box (positioned at y = -2.5)
-    root.position.y = -2.5;
+    // Cake sits upfront on top of table right from start!
+    root.position.y = 0.0;
 
     // --- Hogwarts Great Hall Heavy Oak Feast Table ---
     const tblTex = makeHogwartsTableTex();
@@ -1609,11 +1609,7 @@ startBtn.addEventListener('click', () => {
     }
 
     nameScreen.classList.remove('show');
-
-    // Enable click-anywhere to unbox!
-    setTimeout(() => {
-        readyToUnbox = true;
-    }, 400);
+    if (songStartBtn) songStartBtn.classList.remove('hidden');
 });
 
 // Click ANYWHERE on screen to unbox!
