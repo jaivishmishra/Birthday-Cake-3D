@@ -161,112 +161,173 @@ function buildFloatingCandles() {
 }
 
 // ===================================================================
-// HARRY POTTER THEMED GIFTS & ARTIFACTS ON THE TABLE
+// HARRY POTTER THEMED GIFTS & ARTIFACTS ON THE TABLE (FULL TABLE DECOR)
 // ===================================================================
+let snitchWingL = null;
+let snitchWingR = null;
+
 function buildHogwartsGifts() {
     const giftsGroup = new THREE.Group();
 
-    // ── 1. Gryffindor Crimson & Gold Gift Box ──────────────────────
-    const gBoxMat = new THREE.MeshStandardMaterial({ color: 0x9B111E, roughness: 0.3, metalness: 0.1 });
-    const gRibMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, roughness: 0.2, metalness: 0.8 });
+    // ── Common Materials ──────────────────────────────────────────
+    const goldMat   = new THREE.MeshStandardMaterial({ color: 0xFFD700, roughness: 0.15, metalness: 0.9, emissive: 0x443300 });
+    const woodMat   = new THREE.MeshStandardMaterial({ color: 0x4A2E17, roughness: 0.7 });
+    const leatherMat= new THREE.MeshStandardMaterial({ color: 0x5C3A21, roughness: 0.85 });
 
-    const gBox = new THREE.Group();
-    const bMesh1 = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.4, 2.0), gBoxMat);
-    bMesh1.position.y = 0.7;
-    gBox.add(bMesh1);
+    // ── 1. Golden Snitch with Metallic GOLD Wings ──────────────────
+    const snitchGroup = new THREE.Group();
+    const snitchBody = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 16), goldMat);
+    snitchGroup.add(snitchBody);
 
-    const rX1 = new THREE.Mesh(new THREE.BoxGeometry(2.06, 1.44, 0.35), gRibMat);
-    rX1.position.y = 0.7;
-    const rZ1 = new THREE.Mesh(new THREE.BoxGeometry(0.35, 1.44, 2.06), gRibMat);
-    rZ1.position.y = 0.7;
-    gBox.add(rX1, rZ1);
+    // Glowing Metallic GOLD Wings!
+    snitchWingL = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.04, 0.22), goldMat);
+    snitchWingL.position.set(-0.38, 0.12, 0);
+    snitchWingR = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.04, 0.22), goldMat);
+    snitchWingR.position.set(0.38, 0.12, 0);
+    snitchGroup.add(snitchWingL, snitchWingR);
 
-    // Bow
-    const bowL1 = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.08, 10, 20), gRibMat);
-    bowL1.rotation.y = Math.PI / 4;
-    bowL1.position.set(-0.2, 1.5, 0);
-    const bowR1 = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.08, 10, 20), gRibMat);
-    bowR1.rotation.y = -Math.PI / 4;
-    bowR1.position.set(0.2, 1.5, 0);
-    gBox.add(bowL1, bowR1);
+    snitchGroup.position.set(4.2, 0.32, 2.8);
+    giftsGroup.add(snitchGroup);
 
-    gBox.position.set(-5.6, 0, 1.2);
-    gBox.rotation.y = 0.35;
-    giftsGroup.add(gBox);
+    // ── 2. Elder Wand / Magic Wand ───────────────────────────────
+    const wandGroup = new THREE.Group();
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.015, 3.2, 12), woodMat);
+    shaft.rotation.z = Math.PI / 2;
+    wandGroup.add(shaft);
+    // Handle Nodes
+    for (let k = 0; k < 5; k++) {
+        const node = new THREE.Mesh(new THREE.SphereGeometry(0.065, 8, 8), woodMat);
+        node.position.x = -1.2 + k * 0.25;
+        wandGroup.add(node);
+    }
+    wandGroup.position.set(0.5, 0.06, 5.2);
+    wandGroup.rotation.y = -0.3;
+    giftsGroup.add(wandGroup);
 
-    // ── 2. Ravenclaw Royal Blue & Silver Gift Box ───────────────────
-    const rBoxMat = new THREE.MeshStandardMaterial({ color: 0x1B3B6F, roughness: 0.3, metalness: 0.1 });
-    const rSilMat = new THREE.MeshStandardMaterial({ color: 0xE0E0E0, roughness: 0.2, metalness: 0.9 });
+    // ── 3. Nimbus 2000 Flying Broomstick ──────────────────────────
+    const broomGroup = new THREE.Group();
+    // Handle
+    const broomHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.08, 6.5, 12), woodMat);
+    broomHandle.rotation.z = Math.PI * 0.42;
+    broomGroup.add(broomHandle);
+    // Gold Band
+    const band = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.25, 12), goldMat);
+    band.position.set(-2.2, -0.9, 0);
+    band.rotation.z = Math.PI * 0.42;
+    broomGroup.add(band);
+    // Twig Tail (Cone)
+    const twigs = new THREE.Mesh(new THREE.ConeGeometry(0.65, 2.2, 12), leatherMat);
+    twigs.position.set(-3.2, -1.3, 0);
+    twigs.rotation.z = -Math.PI * 0.58;
+    broomGroup.add(twigs);
 
-    const rBox = new THREE.Group();
-    const bMesh2 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), rBoxMat);
-    bMesh2.position.y = 0.6;
-    rBox.add(bMesh2);
+    broomGroup.position.set(-3.5, 0.25, 5.8);
+    broomGroup.rotation.y = 0.8;
+    giftsGroup.add(broomGroup);
 
-    const rX2 = new THREE.Mesh(new THREE.BoxGeometry(1.65, 1.24, 0.28), rSilMat);
-    rX2.position.y = 0.6;
-    const rZ2 = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.24, 1.65), rSilMat);
-    rZ2.position.y = 0.6;
-    rBox.add(rX2, rZ2);
+    // ── 4. The Sorting Hat ─────────────────────────────────────────
+    const hatGroup = new THREE.Group();
+    const brim = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.5, 0.08, 16), leatherMat);
+    hatGroup.add(brim);
 
-    rBox.position.set(5.8, 0, -1.0);
-    rBox.rotation.y = -0.45;
-    giftsGroup.add(rBox);
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.85, 1.8, 12), leatherMat);
+    cone.position.y = 0.9;
+    cone.rotation.z = -0.18;
+    hatGroup.add(cone);
 
-    // ── 3. Hogwarts Acceptance Letter with Red Wax Seal ─────────────
+    const tip = new THREE.Mesh(new THREE.ConeGeometry(0.4, 0.8, 10), leatherMat);
+    tip.position.set(-0.25, 1.8, 0);
+    tip.rotation.z = -0.45;
+    hatGroup.add(tip);
+
+    hatGroup.position.set(-5.5, 0.05, -3.2);
+    hatGroup.rotation.y = 0.4;
+    giftsGroup.add(hatGroup);
+
+    // ── 5. Stalk of 8 Colorful House Gift Boxes ───────────────────
+    const boxSpecs = [
+        // [x, z, rot, w, h, d, mainCol, ribCol]
+        [-5.8,  1.2,  0.35, 2.2, 1.5, 2.2, 0x9B111E, 0xFFD700], // Gryffindor Red/Gold
+        [ 5.8, -1.0, -0.45, 1.8, 1.3, 1.8, 0x1B3B6F, 0xE0E0E0], // Ravenclaw Blue/Silver
+        [-4.8, -1.8,  0.60, 1.6, 1.1, 1.6, 0x1A535C, 0xC0C0C0], // Slytherin Green/Silver
+        [ 5.2,  1.8, -0.25, 1.9, 1.4, 1.9, 0xE6A100, 0x222222], // Hufflepuff Yellow/Black
+        [ 2.2, -4.8,  0.15, 1.5, 1.0, 1.5, 0x7B1E7A, 0xFFD700], // Purple/Gold
+        [-2.5, -5.2, -0.30, 1.7, 1.2, 1.7, 0xC0392B, 0xFFD700], // Ruby/Gold
+        [ 4.8, -4.2,  0.40, 1.4, 0.9, 1.4, 0x27AE60, 0xF1C40F], // Emerald/Gold
+        [-5.2,  3.8, -0.50, 1.8, 1.2, 1.8, 0x2980B9, 0xECF0F1], // Sapphire/Silver
+    ];
+
+    boxSpecs.forEach(([x, z, rot, w, h, d, mCol, rCol]) => {
+        const bGroup = new THREE.Group();
+        const bMat = new THREE.MeshStandardMaterial({ color: mCol, roughness: 0.3, metalness: 0.1 });
+        const rMat = new THREE.MeshStandardMaterial({ color: rCol, roughness: 0.2, metalness: 0.8 });
+
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), bMat);
+        mesh.position.y = h / 2;
+        bGroup.add(mesh);
+
+        const rx = new THREE.Mesh(new THREE.BoxGeometry(w + 0.05, h + 0.05, 0.3), rMat);
+        rx.position.y = h / 2;
+        const rz = new THREE.Mesh(new THREE.BoxGeometry(0.3, h + 0.05, d + 0.05), rMat);
+        rz.position.y = h / 2;
+        bGroup.add(rx, rz);
+
+        // Ribbon Bow
+        const bowL = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.07, 10, 18), rMat);
+        bowL.rotation.y = Math.PI / 4;
+        bowL.position.set(-0.18, h + 0.15, 0);
+        const bowR = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.07, 10, 18), rMat);
+        bowR.rotation.y = -Math.PI / 4;
+        bowR.position.set(0.18, h + 0.15, 0);
+        bGroup.add(bowL, bowR);
+
+        bGroup.position.set(x, 0, z);
+        bGroup.rotation.y = rot;
+        giftsGroup.add(bGroup);
+    });
+
+    // ── 6. Hogwarts Acceptance Letter ──────────────────────────────
     const letterGroup = new THREE.Group();
-    const envMat  = new THREE.MeshStandardMaterial({ color: 0xF5E6C8, roughness: 0.6 }); // Parchment
-    const sealMat = new THREE.MeshStandardMaterial({ color: 0x8B0000, roughness: 0.3, metalness: 0.2, emissive: 0x220000 }); // Wax seal
+    const envMat  = new THREE.MeshStandardMaterial({ color: 0xF5E6C8, roughness: 0.6 });
+    const sealMat = new THREE.MeshStandardMaterial({ color: 0x8B0000, roughness: 0.3, metalness: 0.2, emissive: 0x330000 });
 
     const envelope = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.05, 1.1), envMat);
     letterGroup.add(envelope);
-
     const seal = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.08, 16), sealMat);
     seal.position.set(0, 0.04, 0);
     letterGroup.add(seal);
 
-    letterGroup.position.set(-4.2, 0.03, 3.5);
+    letterGroup.position.set(-3.2, 0.03, 3.2);
     letterGroup.rotation.y = 0.6;
     giftsGroup.add(letterGroup);
 
-    // ── 4. Golden Snitch ───────────────────────────────────────────
-    const snitchGroup = new THREE.Group();
-    const goldMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, roughness: 0.15, metalness: 0.9, emissive: 0x332200 });
-    const wingMat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.75, roughness: 0.1 });
-
-    const snitchBody = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), goldMat);
-    snitchGroup.add(snitchBody);
-
-    // Silver Feather Wings
-    [-0.32, 0.32].forEach((x, idx) => {
-        const wing = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.04, 0.2), wingMat);
-        wing.position.set(x, 0.1, 0);
-        wing.rotation.z = idx === 0 ? 0.35 : -0.35;
-        snitchGroup.add(wing);
-    });
-
-    snitchGroup.position.set(4.5, 0.3, 3.2);
-    giftsGroup.add(snitchGroup);
-
-    // ── 5. Harry's Round Glasses ────────────────────────────────────
+    // ── 7. Harry's Glasses & Golden Galleon Coins ───────────────────
     const glassesGroup = new THREE.Group();
     const frameMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
-
     [-0.32, 0.32].forEach(x => {
         const rim = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.04, 12, 24), frameMat);
         rim.rotation.x = Math.PI / 2;
         rim.position.x = x;
         glassesGroup.add(rim);
     });
-
     const bridge = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.25, 8), frameMat);
     bridge.rotation.z = Math.PI / 2;
     bridge.position.y = 0.12;
     glassesGroup.add(bridge);
 
-    glassesGroup.position.set(-3.2, 0.05, -4.5);
+    glassesGroup.position.set(-1.8, 0.05, -4.8);
     glassesGroup.rotation.y = 0.2;
     giftsGroup.add(glassesGroup);
+
+    // Golden Galleon Coins
+    for (let c = 0; c < 12; c++) {
+        const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.05, 16), goldMat);
+        const ang = Math.random() * Math.PI * 2;
+        const rad = 3.5 + Math.random() * 2.8;
+        coin.position.set(Math.cos(ang) * rad, 0.03, Math.sin(ang) * rad);
+        coin.rotation.y = Math.random() * Math.PI;
+        giftsGroup.add(coin);
+    }
 
     scene.add(giftsGroup);
 }
@@ -1701,6 +1762,13 @@ const clock = new THREE.Clock();
                 scene.remove(owlGroup); // owl vanishes into night sky
             }
         }
+    }
+
+    // Golden Snitch Wing Flutter Animation
+    if (snitchWingL && snitchWingR) {
+        const sFlap = Math.sin(t * 18) * 0.45;
+        snitchWingL.rotation.z = sFlap;
+        snitchWingR.rotation.z = -sFlap;
     }
 
     controls.update();
