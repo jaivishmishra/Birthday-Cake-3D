@@ -322,10 +322,10 @@ function buildHagrid() {
     hagridKeyLight.position.set(0, 3.5, 3.5);
     hagridGroup.add(hagridKeyLight);
 
-    // Position Hagrid standing IN FRONT / BESIDE the table facing the camera!
+    // Position Hagrid FIXED at 9 O'CLOCK position of the cake!
     hagridGroup.scale.set(1.35, 1.35, 1.35);
-    hagridGroup.position.set(-4.5, 0, 2.5); // Placed forward so camera sees his front face & coat clearly!
-    hagridGroup.rotation.y = Math.PI * 0.42; // Turned to face cake & viewer
+    hagridGroup.position.set(-4.8, 0, 0); // 9 o'clock position (left of cake)
+    hagridGroup.rotation.y = Math.PI * 0.45; // Facing cake & viewer
     scene.add(hagridGroup);
 }
 
@@ -1574,25 +1574,21 @@ function tickConfetti() {
     requestAnimationFrame(tickConfetti);
 }
 
-// ===================================================================
-// UI BINDINGS & FLOW
-// ===================================================================
 let cakeBuilt = false;
+let readyToUnbox = false;
+let hasUnboxed = false;
 
 const nameScreen = document.getElementById('name-input-screen');
-const volRemind = document.getElementById('volume-reminder');
 const nameInput = document.getElementById('user-name-input');
 const ageInput = document.getElementById('age-input');
 const startBtn = document.getElementById('start-celebration-btn');
 const activateTapBtn = document.getElementById('activate-tap-btn');
 const tapBlowBtn = document.getElementById('tap-blow-btn');
 const restartBtn = document.getElementById('restart-btn');
+const songStartBtn = document.getElementById('song-start-btn');
 
-nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') startBtn.click(); });
+if (nameInput) nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') startBtn.click(); });
 if (ageInput) ageInput.addEventListener('keydown', e => { if (e.key === 'Enter') startBtn.click(); });
-
-let readyToUnbox = false;
-let hasUnboxed = false;
 
 function triggerUnboxing() {
     if (!readyToUnbox || hasUnboxed) return;
@@ -1606,7 +1602,7 @@ function triggerUnboxing() {
     triggerCameraIntro();
 
     setTimeout(() => {
-        volRemind.classList.add('show');
+        if (songStartBtn) songStartBtn.classList.remove('hidden');
     }, CAM_ANIM_DURATION + 200);
 }
 
@@ -1634,23 +1630,24 @@ startBtn.addEventListener('click', () => {
 
 // Click ANYWHERE on screen to unbox!
 window.addEventListener('click', (e) => {
-    // ignore clicks inside the name input modal itself
     if (nameScreen.classList.contains('show')) return;
-    if (volRemind.classList.contains('show')) return;
+    if (e.target.closest('#song-start-btn') || e.target.closest('.song-side-btn')) return;
     triggerUnboxing();
 });
 
 window.addEventListener('touchstart', (e) => {
     if (nameScreen.classList.contains('show')) return;
-    if (volRemind.classList.contains('show')) return;
+    if (e.target.closest('#song-start-btn') || e.target.closest('.song-side-btn')) return;
     triggerUnboxing();
 });
 
-volRemind.addEventListener('click', () => {
-    volRemind.classList.remove('show');
-    getAudioCtx();
-    setTimeout(playSong, 400);
-});
+if (songStartBtn) {
+    songStartBtn.addEventListener('click', () => {
+        songStartBtn.classList.add('hidden');
+        getAudioCtx();
+        setTimeout(playSong, 200);
+    });
+}
 
 if (activateTapBtn) {
     activateTapBtn.addEventListener('click', () => {

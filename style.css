@@ -398,24 +398,40 @@ canvas:not(#confetti-canvas) {
 .unbox-btn:active { transform: translateY(-1px); }
 
 /* ===================================================================
-   VOLUME REMINDER
+   FLOATING SIDE SONG BUTTON
    =================================================================== */
-#volume-reminder {
+.song-side-btn {
     position: fixed;
-    inset: 0;
+    top: 25px;
+    left: 25px;
+    z-index: 2000;
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1500;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.6s ease;
+    gap: 0.6rem;
+    padding: 0.85rem 1.6rem;
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: clamp(0.85rem, 2vw, 1.05rem);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #F5E6C8;
+    background: linear-gradient(135deg, rgba(120, 10, 40, 0.92), rgba(60, 5, 20, 0.92));
+    border: 2px solid rgba(212, 175, 55, 0.6);
+    border-radius: 50px;
     cursor: pointer;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.25), 0 8px 25px rgba(0, 0, 0, 0.5);
+    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: tapButtonPop 2.5s ease-in-out infinite;
 }
 
-#volume-reminder.show {
-    opacity: 1;
-    pointer-events: all;
+.song-side-btn:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 0 45px rgba(212, 175, 55, 0.45), 0 10px 30px rgba(0, 0, 0, 0.6);
+    border-color: #FFD700;
+}
+
+.song-side-btn:active {
+    transform: scale(0.96);
 }
 
 .floating-card {
