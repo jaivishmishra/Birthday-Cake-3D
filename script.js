@@ -322,11 +322,10 @@ function buildHagrid() {
     hagridKeyLight.position.set(0, 3.5, 3.5);
     hagridGroup.add(hagridKeyLight);
 
-    // Position Hagrid on the FAR LEFT SIDE of the table (-X direction)
-    // Front/bottom (+Z direction) is 100% clear for the cake cutter!
+    // Position Hagrid standing directly next to the 'B' of BIRTHDAE on the left side!
     hagridGroup.scale.set(1.35, 1.35, 1.35);
-    hagridGroup.position.set(-7.2, 0, -0.8); // Far left side of table
-    hagridGroup.rotation.y = Math.PI * 0.38; // Turned to face cake & viewer from the left
+    hagridGroup.position.set(-4.5, 0, -0.2); // Positioned right beside the 'B' of BIRTHDAE
+    hagridGroup.rotation.y = Math.PI * 0.45; // Facing towards cake center & viewer
     scene.add(hagridGroup);
 }
 
