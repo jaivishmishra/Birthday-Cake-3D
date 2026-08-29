@@ -183,8 +183,6 @@ function buildHogwartsGifts() {
 
     // Long Mahogany Handle with Golden Tail & Gold Bands
     const handleMat = new THREE.MeshLambertMaterial({ color: 0xE67E22, emissive: 0x883300 }); // Glowing Mahogany
-    const goldMat   = new THREE.MeshStandardMaterial({ color: 0xFFD700, emissive: 0x996600, metalness: 0.9, roughness: 0.1 });
-    const strawMat  = new THREE.MeshLambertMaterial({ color: 0xFFD700, emissive: 0x775500 });
 
     const broomHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.1, 8.5, 16), handleMat);
     broomHandle.rotation.z = Math.PI * 0.42;
