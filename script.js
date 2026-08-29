@@ -160,6 +160,8 @@ function buildFloatingCandles() {
     scene.add(floatingCandleGroup);
 }
 
+let broomMeshGroup = null;
+
 // ===================================================================
 // HARRY POTTER THEMED GIFTS & ARTIFACTS ON THE TABLE (BRIGHT & VISIBLE)
 // ===================================================================
@@ -175,30 +177,65 @@ function buildHogwartsGifts() {
     const strawMat  = new THREE.MeshLambertMaterial({ color: 0xF1C40F, emissive: 0x664400 }); // Golden Straw Twigs
     const leatherMat= new THREE.MeshLambertMaterial({ color: 0xBA4A00, emissive: 0x552200 });
 
-    // ── 1. PROMINENT NIMBUS 2000 FLYING BROOMSTICK ──────────────────
+    // ── 1. PROMINENT LEVITATING NIMBUS 2000 BROOMSTICK ─────────────
     const broomGroup = new THREE.Group();
-    // Long Polished Handle
-    const broomHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.09, 7.5, 16), woodMat);
+    broomMeshGroup = broomGroup; // store ref for animation
+
+    // Long Mahogany Handle with Golden Tail & Gold Bands
+    const handleMat = new THREE.MeshLambertMaterial({ color: 0xE67E22, emissive: 0x883300 }); // Glowing Mahogany
+    const goldMat   = new THREE.MeshStandardMaterial({ color: 0xFFD700, emissive: 0x996600, metalness: 0.9, roughness: 0.1 });
+    const strawMat  = new THREE.MeshLambertMaterial({ color: 0xFFD700, emissive: 0x775500 });
+
+    const broomHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.1, 8.5, 16), handleMat);
     broomHandle.rotation.z = Math.PI * 0.42;
     broomGroup.add(broomHandle);
 
-    // Glowing Gold Bands
-    const band1 = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.28, 16), goldMat);
-    band1.position.set(-2.4, -0.95, 0);
+    // Glowing Gold Bands around Handle
+    const band1 = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.35, 16), goldMat);
+    band1.position.set(-2.6, -1.05, 0);
     band1.rotation.z = Math.PI * 0.42;
-    const band2 = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.15, 16), goldMat);
-    band2.position.set(-2.0, -0.80, 0);
+    const band2 = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.2, 16), goldMat);
+    band2.position.set(-2.1, -0.85, 0);
     band2.rotation.z = Math.PI * 0.42;
     broomGroup.add(band1, band2);
 
     // Tail Twigs Bundle
-    const twigs = new THREE.Mesh(new THREE.ConeGeometry(0.75, 2.6, 16), strawMat);
-    twigs.position.set(-3.5, -1.4, 0);
+    const twigs = new THREE.Mesh(new THREE.ConeGeometry(0.85, 3.0, 16), strawMat);
+    twigs.position.set(-3.8, -1.55, 0);
     twigs.rotation.z = -Math.PI * 0.58;
     broomGroup.add(twigs);
 
-    // Position Broomstick proudly across the right side of the table!
-    broomGroup.position.set(3.2, 0.45, 1.8);
+    // ⚡ 3D Floating Name Banner above Broomstick: "⚡ NIMBUS 2000"
+    const broomTagCvs = document.createElement('canvas');
+    broomTagCvs.width = 384; broomTagCvs.height = 96;
+    const bCtx = broomTagCvs.getContext('2d');
+    bCtx.fillStyle = 'rgba(20, 10, 5, 0.85)';
+    bCtx.fillRect(0, 0, 384, 96);
+    bCtx.strokeStyle = '#FFD700';
+    bCtx.lineWidth = 6;
+    bCtx.strokeRect(6, 6, 372, 84);
+    bCtx.font = 'bold 32px "Cinzel", Georgia, serif';
+    bCtx.textAlign = 'center';
+    bCtx.textBaseline = 'middle';
+    bCtx.fillStyle = '#FFD700';
+    bCtx.fillText('⚡ NIMBUS 2000 ⚡', 192, 48);
+
+    const bTagTex = new THREE.CanvasTexture(broomTagCvs);
+    const bTagMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(2.6, 0.65),
+        new THREE.MeshBasicMaterial({ map: bTagTex, side: THREE.DoubleSide, transparent: true })
+    );
+    bTagMesh.position.set(0, 1.6, 0);
+    broomGroup.add(bTagMesh);
+
+    // Dedicated High-Intensity Golden Light directly on the Broomstick!
+    const broomSpotlight = new THREE.PointLight(0xFFD700, 9.0, 18);
+    broomSpotlight.position.set(0, 1.0, 1.5);
+    broomGroup.add(broomSpotlight);
+
+    // Make Broomstick LEVITATE in 3D space above the right side of the table!
+    broomGroup.scale.set(1.15, 1.15, 1.15);
+    broomGroup.position.set(3.6, 3.2, 1.2); // Levitating in mid-air above table!
     broomGroup.rotation.y = -0.55;
     giftsGroup.add(broomGroup);
 
@@ -1779,6 +1816,12 @@ const clock = new THREE.Clock();
         const sFlap = Math.sin(t * 18) * 0.45;
         snitchWingL.rotation.z = sFlap;
         snitchWingR.rotation.z = -sFlap;
+    }
+
+    // Nimbus 2000 Floating Levitation Animation
+    if (broomMeshGroup) {
+        broomMeshGroup.position.y = 3.2 + Math.sin(t * 2.2) * 0.22;
+        broomMeshGroup.rotation.z = Math.sin(t * 1.5) * 0.08;
     }
 
     controls.update();
