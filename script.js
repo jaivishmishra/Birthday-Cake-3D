@@ -1579,8 +1579,12 @@ if (nameInput) nameInput.addEventListener('keydown', e => { if (e.key === 'Enter
 if (ageInput) ageInput.addEventListener('keydown', e => { if (e.key === 'Enter') startBtn.click(); });
 
 function triggerUnboxing() {
-    if (!readyToUnbox || hasUnboxed) return;
+    if (hasUnboxed) return;
     hasUnboxed = true;
+
+    // Hide unbox prompt badge
+    const unboxHint = document.getElementById('tap-unbox-hint');
+    if (unboxHint) unboxHint.classList.remove('show');
 
     // Hedwig Owl spreads wings and slowly takes off into the sky!
     owlFlying = true;
@@ -1612,25 +1616,43 @@ startBtn.addEventListener('click', () => {
     }
 
     nameScreen.classList.remove('show');
+    readyToUnbox = true; // Ready immediately!
 
-    // Enable click-anywhere to open box upfront!
-    setTimeout(() => {
-        readyToUnbox = true;
-    }, 400);
+    // Show floating unbox prompt badge
+    const unboxHint = document.getElementById('tap-unbox-hint');
+    if (unboxHint) unboxHint.classList.add('show');
 });
 
-// Click ANYWHERE on screen to unbox!
-window.addEventListener('click', (e) => {
+// Three.js Raycaster to detect clicks directly on the 3D Gift Box mesh!
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+function onPointerClick(e) {
     if (nameScreen.classList.contains('show')) return;
+    if (hasUnboxed) return;
     if (e.target.closest('#song-start-btn') || e.target.closest('.song-side-btn')) return;
-    triggerUnboxing();
-});
 
-window.addEventListener('touchstart', (e) => {
-    if (nameScreen.classList.contains('show')) return;
-    if (e.target.closest('#song-start-btn') || e.target.closest('.song-side-btn')) return;
+    // Convert click coordinates to normalized device coordinates (-1 to +1)
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    if (giftBoxGroup) {
+        const intersects = raycaster.intersectObjects(giftBoxGroup.children, true);
+        if (intersects.length > 0) {
+            triggerUnboxing();
+            return;
+        }
+    }
+
+    // Fallback: Click anywhere on screen also unboxes!
     triggerUnboxing();
-});
+}
+
+window.addEventListener('click', onPointerClick);
+window.addEventListener('pointerdown', onPointerClick);
 
 if (songStartBtn) {
     songStartBtn.addEventListener('click', () => {
