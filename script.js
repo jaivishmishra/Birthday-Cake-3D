@@ -322,10 +322,11 @@ function buildHagrid() {
     hagridKeyLight.position.set(0, 3.5, 3.5);
     hagridGroup.add(hagridKeyLight);
 
-    // Position Hagrid FIXED at 9 O'CLOCK position of the cake!
+    // Position Hagrid on the FAR LEFT SIDE of the table (-X direction)
+    // Front/bottom (+Z direction) is 100% clear for the cake cutter!
     hagridGroup.scale.set(1.35, 1.35, 1.35);
-    hagridGroup.position.set(-4.8, 0, 0); // 9 o'clock position (left of cake)
-    hagridGroup.rotation.y = Math.PI * 0.45; // Facing cake & viewer
+    hagridGroup.position.set(-7.2, 0, -0.8); // Far left side of table
+    hagridGroup.rotation.y = Math.PI * 0.38; // Turned to face cake & viewer from the left
     scene.add(hagridGroup);
 }
 
