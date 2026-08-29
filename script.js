@@ -1044,8 +1044,8 @@ function buildCake(name) {
     const root = new THREE.Group();
     cakeGroupRef = root;
 
-    // Cake sits upfront on top of table right from start!
-    root.position.y = 0.0;
+    // Cake initially inside the gift box (positioned at y = -2.5)
+    root.position.y = -2.5;
 
     // --- Hogwarts Great Hall Heavy Oak Feast Table ---
     const tblTex = makeHogwartsTableTex();
@@ -1582,12 +1582,14 @@ function triggerUnboxing() {
     if (!readyToUnbox || hasUnboxed) return;
     hasUnboxed = true;
 
-    // Hedwig Owl spreads wings and slowly takes off!
+    // Hedwig Owl spreads wings and slowly takes off into the sky!
     owlFlying = true;
     owlFlightStart = performance.now();
 
-    // Trigger camera cinematic zoom & box opening reveal!
-    triggerCameraIntro();
+    // Trigger box opening reveal animation!
+    isCameraAnimating = true;
+    camAnimStartTime = performance.now();
+    playMagicChimeSound();
 
     setTimeout(() => {
         if (songStartBtn) songStartBtn.classList.remove('hidden');
@@ -1603,13 +1605,18 @@ startBtn.addEventListener('click', () => {
 
     if (!cakeBuilt) {
         buildCake(name);
+        buildGiftBox();
         buildOwl();
         buildHogwartsGifts();
         cakeBuilt = true;
     }
 
     nameScreen.classList.remove('show');
-    if (songStartBtn) songStartBtn.classList.remove('hidden');
+
+    // Enable click-anywhere to open box upfront!
+    setTimeout(() => {
+        readyToUnbox = true;
+    }, 400);
 });
 
 // Click ANYWHERE on screen to unbox!
@@ -1661,12 +1668,10 @@ const clock = new THREE.Clock();
     const t = clock.getElapsedTime();
     const now = performance.now();
 
-    // Cinematic Camera Zoom + Unboxing Animation (Cake emerges out of box)
+    // Unboxing Animation (Lid lifts up & box drops away to reveal cake upfront)
     if (isCameraAnimating) {
         const progress = Math.min(1.0, (now - camAnimStartTime) / CAM_ANIM_DURATION);
-        const easeProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease out
-
-        camera.position.lerpVectors(new THREE.Vector3(0, 35, 45), TARGET_CAM_POS, easeProgress);
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
 
         // Cake rises smoothly OUT of the box onto the table
         if (cakeGroupRef) {
@@ -1686,7 +1691,6 @@ const clock = new THREE.Clock();
 
         if (progress >= 1.0) {
             isCameraAnimating = false;
-            controls.enabled = true;
             if (giftBoxGroup) scene.remove(giftBoxGroup);
         }
     }
