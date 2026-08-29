@@ -322,10 +322,11 @@ function buildHagrid() {
     hagridKeyLight.position.set(0, 3.5, 3.5);
     hagridGroup.add(hagridKeyLight);
 
-    // Position Hagrid standing directly next to the 'B' of BIRTHDAE on the left side!
+    // Position Hagrid at the EXACT RED CIRCLE position (-5.8, 0, 1.2)
+    // Standing in the bottom-left quadrant, beside the 'B' of BIRTHDAE and 'J' of JAI!
     hagridGroup.scale.set(1.35, 1.35, 1.35);
-    hagridGroup.position.set(-4.5, 0, -0.2); // Positioned right beside the 'B' of BIRTHDAE
-    hagridGroup.rotation.y = Math.PI * 0.45; // Facing towards cake center & viewer
+    hagridGroup.position.set(-5.8, 0, 1.2); // Exact red circle location
+    hagridGroup.rotation.y = Math.PI * 0.35; // Facing cake & viewer
     scene.add(hagridGroup);
 }
 
