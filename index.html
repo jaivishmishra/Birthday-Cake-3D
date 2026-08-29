@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎂 Happee Birthdae — Magical Birthday Cake</title>
+    <meta name="description" content="Blow out the candles on a magical 3D birthday cake, Harry Potter style!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ===== NAME INPUT SCREEN ===== -->
+    <div id="name-input-screen" class="show">
+        <div class="magic-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="input-container">
+            <div class="wizard-icon">🧙‍♂️</div>
+            <h1>Who Are We Celebrating?</h1>
+            <p class="sub-text">Enter your name to personalize your magical birthday cake!</p>
+            <div class="input-wrapper">
+                <i class="fas fa-wand-magic-sparkles input-icon"></i>
+                <input type="text" id="user-name-input" placeholder="Enter name here..." maxlength="10" autocomplete="off">
+            </div>
+            <div class="age-wrapper">
+                <i class="fas fa-birthday-cake input-icon"></i>
+                <input type="number" id="age-input" placeholder="Your age... (optional)" min="1" max="120" autocomplete="off">
+            </div>
+            <button id="start-celebration-btn">
+                <span class="btn-sparkle">✨</span>
+                <span>Cast the Spell!</span>
+                <span class="btn-sparkle">✨</span>
+            </button>
+            <p class="tip"><i class="fas fa-lightbulb"></i> Your name &amp; age will personalize the celebration!</p>
+        </div>
+    </div>
+
+    <!-- ===== VOLUME REMINDER ===== -->
+    <div id="volume-reminder">
+        <div class="floating-card">
+            <div class="reminder-emoji">🎵</div>
+            <h2>Let's Celebrate!</h2>
+            <p class="main-instruction"><i class="fas fa-volume-high"></i> Turn up your volume for the birthday song!</p>
+            <p class="sub-instruction">🎂 After the song, blow out the candles!</p>
+            <div class="tap-hint">
+                <span>✨</span>
+                <span>Tap or Click Anywhere to Begin</span>
+                <span>✨</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SONG COUNTDOWN TIMER ===== -->
+    <div class="song-countdown" id="song-countdown">
+        <div class="countdown-ring">
+            <div class="countdown-number" id="countdown-number">13</div>
+        </div>
+        <div class="countdown-label">
+            <span>Song Time</span>
+            <small>seconds remaining</small>
+        </div>
+    </div>
+
+    <!-- ===== BLOW / WISH REMINDER ===== -->
+    <div id="hold-reminder">
+        <div class="blow-card">
+            <h2>🪄 Make Your Magical Wish! 🪄</h2>
+            <p class="main-instruction" id="blow-status">🎤 Calibrating mic for your room…</p>
+            <div id="mic-meter-container" class="mic-meter-container">
+                <div id="mic-meter-bar" class="mic-meter-bar"></div>
+            </div>
+            <p class="sub-instruction"><i class="fas fa-wand-magic-sparkles"></i> Blow into your mic (or tap below) to blow out all <strong>5 candles</strong>!</p>
+            <div class="tap-mode-section">
+                <div class="divider-line"><span>or</span></div>
+                <button id="activate-tap-btn" class="tap-activate-btn">
+                    <i class="fas fa-hand-point-up"></i> No Mic? Activate Tap Mode
+                </button>
+                <button id="tap-blow-btn" class="tap-blow-btn hidden">
+                    <span class="blow-pulse-rings"><span></span><span></span></span>
+                    💨 Tap Here to Blow a Candle!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONGRATULATION OVERLAY ===== -->
+    <div id="congratulation-overlay">
+        <div id="congratulation-text">
+            <div class="congrats-stars">⭐ ⭐ ⭐</div>
+            <h3>HAPPEE BIRTHDAE</h3>
+            <h4 id="personalized-name"></h4>
+            <p id="age-wish-text" class="age-wish"></p>
+            <p class="congrats-sub">✨ Your wish has been cast upon the stars ✨</p>
+            <div class="congrats-emoji-row">🧙‍♂️ 🎂 🪄 🎉 🌟</div>
+            <button id="restart-btn" class="restart-btn">🔄 Celebrate Again!</button>
+        </div>
+    </div>
+
+    <!-- ===== CONFETTI CANVAS ===== -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
