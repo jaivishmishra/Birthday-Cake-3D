@@ -161,10 +161,114 @@ function buildFloatingCandles() {
 }
 
 // ===================================================================
-// HAGRID MODEL (REMOVED AS REQUESTED)
+// HARRY POTTER THEMED GIFTS & ARTIFACTS ON THE TABLE
 // ===================================================================
-function buildHagrid() {
-    // Hagrid removed per user request
+function buildHogwartsGifts() {
+    const giftsGroup = new THREE.Group();
+
+    // ── 1. Gryffindor Crimson & Gold Gift Box ──────────────────────
+    const gBoxMat = new THREE.MeshStandardMaterial({ color: 0x9B111E, roughness: 0.3, metalness: 0.1 });
+    const gRibMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, roughness: 0.2, metalness: 0.8 });
+
+    const gBox = new THREE.Group();
+    const bMesh1 = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.4, 2.0), gBoxMat);
+    bMesh1.position.y = 0.7;
+    gBox.add(bMesh1);
+
+    const rX1 = new THREE.Mesh(new THREE.BoxGeometry(2.06, 1.44, 0.35), gRibMat);
+    rX1.position.y = 0.7;
+    const rZ1 = new THREE.Mesh(new THREE.BoxGeometry(0.35, 1.44, 2.06), gRibMat);
+    rZ1.position.y = 0.7;
+    gBox.add(rX1, rZ1);
+
+    // Bow
+    const bowL1 = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.08, 10, 20), gRibMat);
+    bowL1.rotation.y = Math.PI / 4;
+    bowL1.position.set(-0.2, 1.5, 0);
+    const bowR1 = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.08, 10, 20), gRibMat);
+    bowR1.rotation.y = -Math.PI / 4;
+    bowR1.position.set(0.2, 1.5, 0);
+    gBox.add(bowL1, bowR1);
+
+    gBox.position.set(-5.6, 0, 1.2);
+    gBox.rotation.y = 0.35;
+    giftsGroup.add(gBox);
+
+    // ── 2. Ravenclaw Royal Blue & Silver Gift Box ───────────────────
+    const rBoxMat = new THREE.MeshStandardMaterial({ color: 0x1B3B6F, roughness: 0.3, metalness: 0.1 });
+    const rSilMat = new THREE.MeshStandardMaterial({ color: 0xE0E0E0, roughness: 0.2, metalness: 0.9 });
+
+    const rBox = new THREE.Group();
+    const bMesh2 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), rBoxMat);
+    bMesh2.position.y = 0.6;
+    rBox.add(bMesh2);
+
+    const rX2 = new THREE.Mesh(new THREE.BoxGeometry(1.65, 1.24, 0.28), rSilMat);
+    rX2.position.y = 0.6;
+    const rZ2 = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.24, 1.65), rSilMat);
+    rZ2.position.y = 0.6;
+    rBox.add(rX2, rZ2);
+
+    rBox.position.set(5.8, 0, -1.0);
+    rBox.rotation.y = -0.45;
+    giftsGroup.add(rBox);
+
+    // ── 3. Hogwarts Acceptance Letter with Red Wax Seal ─────────────
+    const letterGroup = new THREE.Group();
+    const envMat  = new THREE.MeshStandardMaterial({ color: 0xF5E6C8, roughness: 0.6 }); // Parchment
+    const sealMat = new THREE.MeshStandardMaterial({ color: 0x8B0000, roughness: 0.3, metalness: 0.2, emissive: 0x220000 }); // Wax seal
+
+    const envelope = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.05, 1.1), envMat);
+    letterGroup.add(envelope);
+
+    const seal = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.08, 16), sealMat);
+    seal.position.set(0, 0.04, 0);
+    letterGroup.add(seal);
+
+    letterGroup.position.set(-4.2, 0.03, 3.5);
+    letterGroup.rotation.y = 0.6;
+    giftsGroup.add(letterGroup);
+
+    // ── 4. Golden Snitch ───────────────────────────────────────────
+    const snitchGroup = new THREE.Group();
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, roughness: 0.15, metalness: 0.9, emissive: 0x332200 });
+    const wingMat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.75, roughness: 0.1 });
+
+    const snitchBody = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), goldMat);
+    snitchGroup.add(snitchBody);
+
+    // Silver Feather Wings
+    [-0.32, 0.32].forEach((x, idx) => {
+        const wing = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.04, 0.2), wingMat);
+        wing.position.set(x, 0.1, 0);
+        wing.rotation.z = idx === 0 ? 0.35 : -0.35;
+        snitchGroup.add(wing);
+    });
+
+    snitchGroup.position.set(4.5, 0.3, 3.2);
+    giftsGroup.add(snitchGroup);
+
+    // ── 5. Harry's Round Glasses ────────────────────────────────────
+    const glassesGroup = new THREE.Group();
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
+
+    [-0.32, 0.32].forEach(x => {
+        const rim = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.04, 12, 24), frameMat);
+        rim.rotation.x = Math.PI / 2;
+        rim.position.x = x;
+        glassesGroup.add(rim);
+    });
+
+    const bridge = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.25, 8), frameMat);
+    bridge.rotation.z = Math.PI / 2;
+    bridge.position.y = 0.12;
+    glassesGroup.add(bridge);
+
+    glassesGroup.position.set(-3.2, 0.05, -4.5);
+    glassesGroup.rotation.y = 0.2;
+    giftsGroup.add(glassesGroup);
+
+    scene.add(giftsGroup);
 }
 
 // ===================================================================
@@ -1454,7 +1558,7 @@ startBtn.addEventListener('click', () => {
     if (!cakeBuilt) {
         buildCake(name);
         buildOwl();
-        buildHagrid();
+        buildHogwartsGifts();
         cakeBuilt = true;
     }
 
